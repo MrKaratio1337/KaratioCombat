@@ -14,6 +14,7 @@ public final class ConfigFactory {
             config.withBindFile(new File(plugin.getDataFolder(), "config.yml"));
             config.saveDefaults();
             config.load(true);
+            config.save();
         });
     }
 }

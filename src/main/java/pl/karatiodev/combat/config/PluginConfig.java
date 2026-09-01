@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 public class PluginConfig extends OkaeriConfig {
 
-    @Comment("Ustawianie Antylogoutu")
+    @Comment("Combat Settings")
     private Antylogout antylogout = new Antylogout();
 
     @Getter
