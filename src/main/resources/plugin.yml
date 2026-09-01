@@ -1,0 +1,4 @@
+main: pl.karatiodev.combat.CombatPlugin
+name: KaratioCombat
+version: 1.0-BETA
+author: MrKaratio1337
