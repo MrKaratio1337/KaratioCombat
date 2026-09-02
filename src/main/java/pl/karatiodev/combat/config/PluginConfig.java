@@ -17,6 +17,18 @@ public class PluginConfig extends OkaeriConfig {
     @Getter
     @Setter
     public static class Antylogout extends OkaeriConfig {
+        private int time = 30;
+        private List<String> start = List.of(
+                "<red>You are in combat! Do not log out for <seconds>s.",
+                "[ACTIONBAR] <red>Combat: <yellow><seconds>s",
+                "[BOSSBAR] <red>Combat: <yellow><seconds>s"
+        );
+        
+        private List<String> end = List.of(
+                "<green>You have finished fighting. You can safely log out.\"",
+                "[ACTIONBAR] Combat ended!"
+        );
+
         private Regions regions = new Regions();
     }
 

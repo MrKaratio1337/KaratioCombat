@@ -1,5 +1,7 @@
 package pl.karatiodev.combat.listeners;
 
+import org.bukkit.GameMode;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,7 +21,20 @@ public class CombatListener implements Listener {
         if(event.isCancelled()) return;
 
         if(event.getEntity() instanceof Player target){
+            Player attacker = this.getAttacker(event.getDamager());
 
+            if(attacker != null){
+                if(attacker.getGameMode() == GameMode.CREATIVE) return;
+
+                this.plugin.getCombatService().startCombat(target);
+                this.plugin.getCombatService().startCombat(attacker);
+            }
         }
+    }
+
+    private Player getAttacker(Entity damager){
+        if(damager instanceof Player player) return player;
+
+        return null;
     }
 }
