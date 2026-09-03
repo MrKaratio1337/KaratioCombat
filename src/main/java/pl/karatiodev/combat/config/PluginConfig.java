@@ -2,6 +2,7 @@ package pl.karatiodev.combat.config;
 
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
+import eu.okaeri.configs.annotation.CustomKey;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +14,9 @@ public class PluginConfig extends OkaeriConfig {
 
     @Comment("Combat Settings")
     private Antylogout antylogout = new Antylogout();
+
+    @Comment("Messages Settings")
+    private Messages messages = new Messages();
 
     @Getter
     @Setter
@@ -38,4 +42,10 @@ public class PluginConfig extends OkaeriConfig {
         private List<String> blocked = List.of("spawn");
     }
 
+    @Getter
+    @Setter
+    public static class Messages extends OkaeriConfig {
+        @CustomKey("logouyt-during-fight")
+        private String logoutDuringFight = "<red>Player <yellow><player></yellow> logged out during combat!";
+    }
 }

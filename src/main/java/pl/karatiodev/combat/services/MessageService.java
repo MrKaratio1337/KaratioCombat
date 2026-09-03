@@ -34,6 +34,12 @@ public class MessageService {
         update(player, this.plugin.getPluginConfig().getAntylogout().getStart(), "<seconds>", String.valueOf(seconds));
     }
 
+    public void sendQuitInCombatMessage(Player player){
+        String messageStr = this.plugin.getPluginConfig().getMessages().getLogoutDuringFight().replace("<player>", player.getName());
+        this.plugin.getServer().broadcast(ChatUtility.parse(messageStr));
+        this.lastTimerSecond.remove(player.getUniqueId());
+    }
+
     private void send(Player player, Iterable<String> messages, String placeholder, String value){
         for(String message : messages){
             if(message != null && !message.isEmpty()){

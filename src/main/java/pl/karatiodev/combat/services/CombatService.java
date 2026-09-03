@@ -80,6 +80,14 @@ public class CombatService {
         }
     }
 
+    public void handleQuit(Player player){
+        if(player != null && isInCombat(player)){
+            this.plugin.getMessageService().sendQuitInCombatMessage(player);
+            player.setHealth(0.0);
+            endCombat(player);
+        }
+    }
+
     public void clearAllCombats(){
         this.plugin.getServer().getOnlinePlayers().stream().filter(this::isInCombat).forEach(this::endCombat);
     }
