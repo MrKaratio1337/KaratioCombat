@@ -16,6 +16,7 @@ This helps prevent players from escaping fights by simply leaving the server.
 ## ✨ Features
 * ⚔️ Combat tagging system
 * ⏱️ Configurable combat duration
+* 💀 Death when player logout
 
 ---
 
