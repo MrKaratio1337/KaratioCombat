@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import pl.karatiodev.combat.config.ConfigFactory;
 import pl.karatiodev.combat.config.PluginConfig;
 import pl.karatiodev.combat.listeners.CombatListener;
+import pl.karatiodev.combat.listeners.UpdateListener;
 import pl.karatiodev.combat.services.CombatService;
 import pl.karatiodev.combat.services.MessageService;
 
@@ -19,6 +20,7 @@ public class CombatPlugin extends JavaPlugin {
     private PluginConfig pluginConfig;
     private MessageService messageService;
     private CombatService combatService;
+    private UpdateChecker updateChecker;
 
     @Override
     public void onEnable() {
@@ -26,6 +28,9 @@ public class CombatPlugin extends JavaPlugin {
 
         this.messageService = new MessageService(this);
         this.combatService = new CombatService(this);
+        this.updateChecker = new UpdateChecker(this);
+
+        updateChecker.checkForUpdates();
 
         this.registerListeners();
     }
@@ -39,5 +44,6 @@ public class CombatPlugin extends JavaPlugin {
         PluginManager pluginManager = Bukkit.getPluginManager();
 
         pluginManager.registerEvents(new CombatListener(this), this);
+        pluginManager.registerEvents(new UpdateListener(this), this);
     }
 }
