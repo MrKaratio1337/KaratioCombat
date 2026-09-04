@@ -42,6 +42,7 @@ public class PluginConfig extends OkaeriConfig {
     public static class Settings extends OkaeriConfig{
         private boolean mobs = false;
         private boolean projectile = true;
+        private boolean pearl = false;
 
         @CustomKey("bossbar-timer")
         private boolean bossbarTimer = false;
