@@ -33,7 +33,14 @@ public class PluginConfig extends OkaeriConfig {
                 "[ACTIONBAR] Combat ended!"
         );
 
+        private Settings settings = new Settings();
         private Regions regions = new Regions();
+    }
+
+    @Getter
+    @Setter
+    public static class Settings extends OkaeriConfig{
+        private boolean mobs = false;
     }
 
     @Getter

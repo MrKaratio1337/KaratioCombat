@@ -3,6 +3,7 @@ package pl.karatiodev.combat.listeners;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,6 +24,12 @@ public class CombatListener implements Listener {
 
         if(event.getEntity() instanceof Player target){
             Player attacker = this.getAttacker(event.getDamager());
+
+            if(attacker == null && event.getDamager() instanceof Mob && this.plugin.getPluginConfig().getAntylogout().getSettings().isMobs()){
+                if(!RegionUtility.isBlockedRegion(target.getLocation(), this.plugin)){
+                    this.plugin.getCombatService().startCombat(target);
+                }
+            }
 
             if(attacker != null){
                 if(attacker.getGameMode() == GameMode.CREATIVE) return;
