@@ -6,7 +6,7 @@
 
     <groupId>pl.karatiodev</groupId>
     <artifactId>KaratioCombat</artifactId>
-    <version>1.1-BETA</version>
+    <version>1.2-BETA</version>
     <packaging>jar</packaging>
 
     <properties>

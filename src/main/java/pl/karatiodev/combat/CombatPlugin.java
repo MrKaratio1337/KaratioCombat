@@ -37,7 +37,8 @@ public class CombatPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
+        if(this.combatService != null) this.combatService.clearAllCombats();
+        if(this.liteCommands != null) this.liteCommands.unregister();
     }
 
     private void registerListeners(){

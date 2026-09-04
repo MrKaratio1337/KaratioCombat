@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import pl.karatiodev.combat.CombatPlugin;
 
@@ -31,6 +32,13 @@ public class CombatListener implements Listener {
                 this.plugin.getCombatService().startCombat(attacker);
             }
         }
+    }
+
+    @EventHandler
+    public void onDeath(PlayerDeathEvent event){
+        Player dead = event.getEntity();
+
+        if(this.plugin.getCombatService().isInCombat(dead)) this.plugin.getCombatService().endCombat(dead);
     }
 
     @EventHandler
