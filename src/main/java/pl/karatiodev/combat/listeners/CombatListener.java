@@ -1,5 +1,6 @@
 package pl.karatiodev.combat.listeners;
 
+import lombok.RequiredArgsConstructor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -9,14 +10,12 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import pl.karatiodev.combat.CombatPlugin;
+import pl.karatiodev.combat.utilities.RegionUtility;
 
+@RequiredArgsConstructor
 public class CombatListener implements Listener {
 
     private final CombatPlugin plugin;
-
-    public CombatListener(CombatPlugin plugin){
-        this.plugin = plugin;
-    }
 
     @EventHandler
     public void onEntityDamage(EntityDamageByEntityEvent event){
@@ -28,8 +27,18 @@ public class CombatListener implements Listener {
             if(attacker != null){
                 if(attacker.getGameMode() == GameMode.CREATIVE) return;
 
-                this.plugin.getCombatService().startCombat(target);
-                this.plugin.getCombatService().startCombat(attacker);
+                boolean targetInBlockedRegion = RegionUtility.isBlockedRegion(target.getLocation(), plugin);
+                boolean attackerInBlockedRegion = RegionUtility.isBlockedRegion(attacker.getLocation(), plugin);
+
+                if(targetInBlockedRegion && !attackerInBlockedRegion){
+                    event.setCancelled(true);
+                    return;
+                }
+
+                if(!targetInBlockedRegion && !attackerInBlockedRegion){
+                    this.plugin.getCombatService().startCombat(target);
+                    this.plugin.getCombatService().startCombat(attacker);
+                }
             }
         }
     }

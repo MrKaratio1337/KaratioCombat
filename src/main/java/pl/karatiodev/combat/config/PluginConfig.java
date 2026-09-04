@@ -47,5 +47,8 @@ public class PluginConfig extends OkaeriConfig {
     public static class Messages extends OkaeriConfig {
         @CustomKey("logouyt-during-fight")
         private String logoutDuringFight = "<red>Player <yellow><player></yellow> logged out during combat!";
+
+        @CustomKey("cannot-enter-region")
+        private String cannotEnterRegion = "<red>You cannot enter this region during combat!";
     }
 }

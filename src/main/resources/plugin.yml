@@ -1,7 +1,8 @@
 main: pl.karatiodev.combat.CombatPlugin
 name: KaratioCombat
-version: 1.3-BETA
+version: 1.4-BETA
 author: MrKaratio1337
+api-version: 1.13
 
 softdepend:
   - WorldGuard

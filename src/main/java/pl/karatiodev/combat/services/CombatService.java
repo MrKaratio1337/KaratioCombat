@@ -76,6 +76,7 @@ public class CombatService {
 
             if(player.isOnline()){
                 this.plugin.getMessageService().endCombatMessage(player);
+                this.plugin.getRegionService().forceRemove(player);
             }
         }
     }

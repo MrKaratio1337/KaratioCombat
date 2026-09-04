@@ -8,9 +8,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import pl.karatiodev.combat.config.ConfigFactory;
 import pl.karatiodev.combat.config.PluginConfig;
 import pl.karatiodev.combat.listeners.CombatListener;
+import pl.karatiodev.combat.listeners.RegionListener;
 import pl.karatiodev.combat.listeners.UpdateListener;
 import pl.karatiodev.combat.services.CombatService;
 import pl.karatiodev.combat.services.MessageService;
+import pl.karatiodev.combat.services.RegionService;
 
 @Getter
 public class CombatPlugin extends JavaPlugin {
@@ -21,6 +23,7 @@ public class CombatPlugin extends JavaPlugin {
     private MessageService messageService;
     private CombatService combatService;
     private UpdateChecker updateChecker;
+    private RegionService regionService;
 
     @Override
     public void onEnable() {
@@ -29,6 +32,7 @@ public class CombatPlugin extends JavaPlugin {
         this.messageService = new MessageService(this);
         this.combatService = new CombatService(this);
         this.updateChecker = new UpdateChecker(this);
+        this.regionService = new RegionService(this);
 
         updateChecker.checkForUpdates();
 
@@ -46,5 +50,9 @@ public class CombatPlugin extends JavaPlugin {
 
         pluginManager.registerEvents(new CombatListener(this), this);
         pluginManager.registerEvents(new UpdateListener(this), this);
+
+        if(pluginManager.getPlugin("WorldGuard") != null){
+            pluginManager.registerEvents(new RegionListener(this), this);
+        }
     }
 }
