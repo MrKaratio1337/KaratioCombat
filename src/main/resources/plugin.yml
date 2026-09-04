@@ -1,6 +1,6 @@
 main: pl.karatiodev.combat.CombatPlugin
 name: KaratioCombat
-version: 1.6-BETA
+version: 1.7-BETA
 author: MrKaratio1337
 api-version: 1.13
 
