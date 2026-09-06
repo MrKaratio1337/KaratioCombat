@@ -34,6 +34,7 @@ public class PluginConfig extends OkaeriConfig {
         );
 
         private Settings settings = new Settings();
+        private Commands commands = new Commands();
         private Regions regions = new Regions();
     }
 
@@ -50,6 +51,12 @@ public class PluginConfig extends OkaeriConfig {
 
     @Getter
     @Setter
+    public static class Commands extends OkaeriConfig {
+        private List<String> whitelist = List.of("msg", "r", "helpop");
+    }
+
+    @Getter
+    @Setter
     public static class Regions extends OkaeriConfig {
         private List<String> blocked = List.of("spawn");
     }
@@ -62,5 +69,8 @@ public class PluginConfig extends OkaeriConfig {
 
         @CustomKey("cannot-enter-region")
         private String cannotEnterRegion = "<red>You cannot enter this region during combat!";
+
+        @CustomKey("cannot-use-command")
+        private String cannotUseCommand = "<red>You cannot use this command during combat!";
     }
 }

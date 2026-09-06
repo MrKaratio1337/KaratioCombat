@@ -6,14 +6,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.util.Vector;
 import pl.karatiodev.combat.CombatPlugin;
 import pl.karatiodev.combat.utilities.ChatUtility;
@@ -130,6 +128,21 @@ public class CombatListener implements Listener {
     public void onQuit(PlayerQuitEvent event){
         Player player = event.getPlayer();
         if(this.plugin.getCombatService().isInCombat(player)) this.plugin.getCombatService().handleQuit(player);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onCommand(PlayerCommandPreprocessEvent event){
+        Player player = event.getPlayer();
+
+        if(player.hasPermission("karatiocombat.bypass")) return;
+
+        if(this.plugin.getCombatService().isInCombat(player)){
+            String command = event.getMessage().substring(1).split(" ")[0].toLowerCase();
+            if(this.plugin.getPluginConfig().getAntylogout().getCommands().getWhitelist().contains(command)){
+                event.setCancelled(true);
+                player.sendMessage(ChatUtility.parse(this.plugin.getPluginConfig().getMessages().getCannotUseCommand()));
+            }
+        }
     }
 
     private Player getAttacker(Entity damager){
