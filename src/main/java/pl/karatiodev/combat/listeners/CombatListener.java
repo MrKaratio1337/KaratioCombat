@@ -151,6 +151,14 @@ public class CombatListener implements Listener {
             if(projectile instanceof EnderPearl && !this.plugin.getPluginConfig().getAntylogout().getSettings().isPearl()){
                 return null;
             }
+
+            if(projectile.getShooter() instanceof Player shooter){
+                if(shooter.getGameMode() == GameMode.CREATIVE){
+                    return null;
+                }
+
+                return shooter;
+            }
         }
 
         return null;
