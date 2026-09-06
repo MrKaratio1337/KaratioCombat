@@ -3,14 +3,18 @@ package pl.karatiodev.combat.listeners;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.util.Vector;
 import pl.karatiodev.combat.CombatPlugin;
 import pl.karatiodev.combat.utilities.ChatUtility;
 import pl.karatiodev.combat.utilities.RegionUtility;
@@ -57,7 +61,7 @@ public class CombatListener implements Listener {
         if(event.getCause() == PlayerTeleportEvent.TeleportCause.ENDER_PEARL || event.getCause() == PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT){
             Player player = event.getPlayer();
 
-            if(player.hasPermission("antylogout.bypass")) return;
+            if(player.hasPermission("karatiocombat.bypass")) return;
 
             Location to = event.getTo();
             Location from = event.getFrom();
@@ -72,6 +76,43 @@ public class CombatListener implements Listener {
                         this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> {
                             this.plugin.getServer().getPluginManager().callEvent(new PlayerMoveEvent(player, from, to));
                         }, 1L);
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onInteract(PlayerInteractEvent event){
+        Player player = event.getPlayer();
+
+        if(player.hasPermission("karatiocombat.bypass")) return;
+
+        if(this.plugin.getCombatService().isInCombat(player)){
+            if((event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_AIR)
+            && event.getItem() != null && event.getItem().getType() == Material.ENDER_PEARL){
+
+                if(this.plugin.getPluginConfig().getAntylogout().getSettings().isPearl()){
+                    this.plugin.getCombatService().startCombat(player);
+                }
+
+                Location targetLocation = player.getTargetBlockExact(5) != null ? player.getTargetBlockExact(5).getLocation() : null;
+                if (targetLocation != null && RegionUtility.isBlockedRegion(targetLocation, this.plugin)) {
+                    event.setCancelled(true);
+                    player.sendMessage(ChatUtility.parse(this.plugin.getPluginConfig().getMessages().getCannotEnterRegion()));
+                    return;
+                }
+
+                Location eyeLocation = player.getEyeLocation();
+                Vector direction = eyeLocation.getDirection();
+                Location currentLocation = eyeLocation.clone();
+
+                for (int i = 0; i < 16; i++) {
+                    currentLocation.add(direction);
+                    if (RegionUtility.isBlockedRegion(currentLocation, this.plugin)) {
+                        event.setCancelled(true);
+                        player.sendMessage(ChatUtility.parse(this.plugin.getPluginConfig().getMessages().getCannotEnterRegion()));
+                        return;
                     }
                 }
             }
