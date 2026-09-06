@@ -1,10 +1,13 @@
 package pl.karatiodev.combat;
 
 import dev.rollczi.litecommands.LiteCommands;
+import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import pl.karatiodev.combat.commands.KaratioCombatCommand;
 import pl.karatiodev.combat.config.ConfigFactory;
 import pl.karatiodev.combat.config.PluginConfig;
 import pl.karatiodev.combat.listeners.CombatListener;
@@ -13,6 +16,7 @@ import pl.karatiodev.combat.listeners.UpdateListener;
 import pl.karatiodev.combat.services.CombatService;
 import pl.karatiodev.combat.services.MessageService;
 import pl.karatiodev.combat.services.RegionService;
+import pl.karatiodev.combat.utilities.ChatUtility;
 
 @Getter
 public class CombatPlugin extends JavaPlugin {
@@ -37,6 +41,18 @@ public class CombatPlugin extends JavaPlugin {
         updateChecker.checkForUpdates();
 
         this.registerListeners();
+
+        this.liteCommands = LiteBukkitFactory.builder(this)
+                .commands(new KaratioCombatCommand(this))
+                .invalidUsage((invocation, result, chain) -> {
+                    CommandSender sender = invocation.sender();
+                    sender.sendMessage(ChatUtility.parse(this.pluginConfig.getMessages().getInvalidUsage()));
+                })
+                .missingPermission((invocation, result, chain) -> {
+                    CommandSender sender = invocation.sender();
+                    sender.sendMessage(ChatUtility.parse(this.pluginConfig.getMessages().getNoPermission()));
+                })
+                .build();
     }
 
     @Override

@@ -72,5 +72,14 @@ public class PluginConfig extends OkaeriConfig {
 
         @CustomKey("cannot-use-command")
         private String cannotUseCommand = "<red>You cannot use this command during combat!";
+
+        @CustomKey("invalid-usage")
+        private String invalidUsage = "<red>Correct usage: /karatiocombat [reload]";
+
+        @CustomKey("no-permission")
+        private String noPermission = "<red>You do not have permission to that command!";
+
+        @CustomKey("config-reloaded")
+        private String configReloaded = "<green>Configuration reloaded!";
     }
 }
