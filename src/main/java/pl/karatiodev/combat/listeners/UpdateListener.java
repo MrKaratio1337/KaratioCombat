@@ -28,6 +28,6 @@ public class UpdateListener implements Listener {
         player.sendMessage(ChatUtility.parse("<gray>[<aqua>KaratioCombat<gray>] <red>Your plugin is outdated!"));
         player.sendMessage(ChatUtility.parse("<gray>Current version: <red>" + currentVersion));
         player.sendMessage(ChatUtility.parse("<gray>Latest version: <green>" + latestVersion));
-        player.sendMessage(ChatUtility.parse("<yellow>Download the latest version from Github or Modirinth!"));
+        player.sendMessage(ChatUtility.parse("<yellow>Download the latest version from Github or Modrinth!"));
     }
 }
