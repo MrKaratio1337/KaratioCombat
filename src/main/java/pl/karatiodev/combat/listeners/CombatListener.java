@@ -56,26 +56,24 @@ public class CombatListener implements Listener {
 
     @EventHandler
     public void onTeleport(PlayerTeleportEvent event){
-        if(event.getCause() == PlayerTeleportEvent.TeleportCause.ENDER_PEARL || event.getCause() == PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT){
-            Player player = event.getPlayer();
+        PlayerTeleportEvent.TeleportCause cause = event.getCause();
+        if(cause != PlayerTeleportEvent.TeleportCause.ENDER_PEARL && cause != PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT) return;
 
-            if(player.hasPermission("karatiocombat.bypass")) return;
+        Player player = event.getPlayer();
+        if(player.hasPermission("karatiocombat.bypass")) return;
 
-            Location to = event.getTo();
-            Location from = event.getFrom();
+        Location to = event.getTo();
+        if(to == null || !plugin.getCombatService().isInCombat(player)) return;
 
-            if(to != null && this.plugin.getCombatService().isInCombat(player)){
-                if(RegionUtility.isBlockedRegion(to, this.plugin)){
-                    event.setCancelled(true);
-                    player.sendMessage(ChatUtility.parse(this.plugin.getPluginConfig().getMessages().getCannotEnterRegion()));
-                } else{
-                    this.plugin.getRegionService().forceRemove(player);
-                    if(this.plugin.getCombatService().isInCombat(player)){
-                        this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> {
-                            this.plugin.getServer().getPluginManager().callEvent(new PlayerMoveEvent(player, from, to));
-                        }, 1L);
-                    }
-                }
+        if(RegionUtility.isBlockedRegion(to, plugin)){
+            event.setCancelled(true);
+            player.sendMessage(ChatUtility.parse(plugin.getPluginConfig().getMessages().getCannotEnterRegion()));
+        } else{
+            plugin.getRegionService().forceRemove(player);
+            if(plugin.getCombatService().isInCombat(player)){
+                plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                    plugin.getServer().getPluginManager().callEvent(new PlayerMoveEvent(player, event.getFrom(), to));
+                }, 1L);
             }
         }
     }
