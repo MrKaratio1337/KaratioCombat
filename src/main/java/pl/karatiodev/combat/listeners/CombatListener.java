@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,6 +17,8 @@ import org.bukkit.util.Vector;
 import pl.karatiodev.combat.CombatPlugin;
 import pl.karatiodev.combat.utilities.ChatUtility;
 import pl.karatiodev.combat.utilities.RegionUtility;
+
+import java.util.Locale;
 
 @RequiredArgsConstructor
 public class CombatListener implements Listener {
@@ -81,38 +84,36 @@ public class CombatListener implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent event){
         Player player = event.getPlayer();
-
         if(player.hasPermission("karatiocombat.bypass")) return;
 
-        if(this.plugin.getCombatService().isInCombat(player)){
-            if((event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_AIR)
-            && event.getItem() != null && event.getItem().getType() == Material.ENDER_PEARL){
+        if(plugin.getCombatService().isInCombat(player) && event.getItem() != null && event.getItem().getType() == Material.ENDER_PEARL &&
+                (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR)){
+            if(plugin.getPluginConfig().getAntylogout().getSettings().isPearl()){
+                plugin.getCombatService().startCombat(player);
+            }
 
-                if(this.plugin.getPluginConfig().getAntylogout().getSettings().isPearl()){
-                    this.plugin.getCombatService().startCombat(player);
-                }
+            Block targetBlock = player.getTargetBlockExact(5);
+            if(targetBlock != null && RegionUtility.isBlockedRegion(targetBlock.getLocation(), plugin)){
+                cancelPearl(event, player);
+                return;
+            }
 
-                Location targetLocation = player.getTargetBlockExact(5) != null ? player.getTargetBlockExact(5).getLocation() : null;
-                if (targetLocation != null && RegionUtility.isBlockedRegion(targetLocation, this.plugin)) {
-                    event.setCancelled(true);
-                    player.sendMessage(ChatUtility.parse(this.plugin.getPluginConfig().getMessages().getCannotEnterRegion()));
+            Location currentLocation = player.getLocation();
+            Vector direction = currentLocation.getDirection();
+
+            for(int i = 0; i < 16; i++){
+                currentLocation.add(direction);
+                if(RegionUtility.isBlockedRegion(currentLocation, plugin)){
+                    cancelPearl(event, player);
                     return;
-                }
-
-                Location eyeLocation = player.getEyeLocation();
-                Vector direction = eyeLocation.getDirection();
-                Location currentLocation = eyeLocation.clone();
-
-                for (int i = 0; i < 16; i++) {
-                    currentLocation.add(direction);
-                    if (RegionUtility.isBlockedRegion(currentLocation, this.plugin)) {
-                        event.setCancelled(true);
-                        player.sendMessage(ChatUtility.parse(this.plugin.getPluginConfig().getMessages().getCannotEnterRegion()));
-                        return;
-                    }
                 }
             }
         }
+    }
+
+    private void cancelPearl(PlayerInteractEvent event, Player player) {
+        event.setCancelled(true);
+        player.sendMessage(ChatUtility.parse(this.plugin.getPluginConfig().getMessages().getCannotEnterRegion()));
     }
 
     @EventHandler
@@ -131,12 +132,13 @@ public class CombatListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onCommand(PlayerCommandPreprocessEvent event){
         Player player = event.getPlayer();
-
         if(player.hasPermission("karatiocombat.bypass")) return;
 
         if(this.plugin.getCombatService().isInCombat(player)){
-            String command = event.getMessage().substring(1).split(" ")[0].toLowerCase();
-            if(this.plugin.getPluginConfig().getAntylogout().getCommands().getWhitelist().contains(command)){
+            String command = event.getMessage().substring(1).split(" ")[0].toLowerCase(Locale.ROOT);
+
+            boolean isWhitelisted = plugin.getPluginConfig().getAntylogout().getCommands().getWhitelist().contains(command);
+            if(!isWhitelisted){
                 event.setCancelled(true);
                 player.sendMessage(ChatUtility.parse(this.plugin.getPluginConfig().getMessages().getCannotUseCommand()));
             }
@@ -145,15 +147,12 @@ public class CombatListener implements Listener {
 
     private Player getAttacker(Entity damager){
         if(damager instanceof Player player) return player;
-        if(damager instanceof Projectile projectile && this.plugin.getPluginConfig().getAntylogout().getSettings().isProjectile()){
-            if(projectile instanceof EnderPearl && !this.plugin.getPluginConfig().getAntylogout().getSettings().isPearl()){
-                return null;
-            }
+
+        if(damager instanceof Projectile projectile && plugin.getPluginConfig().getAntylogout().getSettings().isProjectile()){
+            if(projectile instanceof EnderPearl && !plugin.getPluginConfig().getAntylogout().getSettings().isPearl()) return null;
 
             if(projectile.getShooter() instanceof Player shooter){
-                if(shooter.getGameMode() == GameMode.CREATIVE){
-                    return null;
-                }
+                if(shooter.getGameMode() == GameMode.CREATIVE) return null;
 
                 return shooter;
             }
