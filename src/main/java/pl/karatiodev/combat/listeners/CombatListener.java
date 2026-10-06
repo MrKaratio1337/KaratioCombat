@@ -26,30 +26,30 @@ public class CombatListener implements Listener {
     public void onEntityDamage(EntityDamageByEntityEvent event){
         if(event.isCancelled()) return;
 
-        if(event.getEntity() instanceof Player target){
-            Player attacker = this.getAttacker(event.getDamager());
+        if(!(event.getEntity() instanceof Player target)) return;
 
-            if(attacker == null && event.getDamager() instanceof Mob && this.plugin.getPluginConfig().getAntylogout().getSettings().isMobs()){
-                if(!RegionUtility.isBlockedRegion(target.getLocation(), this.plugin)){
-                    this.plugin.getCombatService().startCombat(target);
-                }
+        Player attacker = this.getAttacker(event.getDamager());
+        if(attacker == null && event.getDamager() instanceof Mob && plugin.getPluginConfig().getAntylogout().getSettings().isMobs()){
+            if(!RegionUtility.isBlockedRegion(target.getLocation(), plugin)){
+                this.plugin.getCombatService().startCombat(target);
+            }
+            return;
+        }
+
+        if(attacker != null){
+            if(attacker.getGameMode() == GameMode.CREATIVE) return;
+
+            boolean targetInBlockedRegion = RegionUtility.isBlockedRegion(target.getLocation(), plugin);
+            boolean attackerInBlockedRegion = RegionUtility.isBlockedRegion(attacker.getLocation(), plugin);
+
+            if(targetInBlockedRegion && !attackerInBlockedRegion){
+                event.setCancelled(true);
+                return;
             }
 
-            if(attacker != null){
-                if(attacker.getGameMode() == GameMode.CREATIVE) return;
-
-                boolean targetInBlockedRegion = RegionUtility.isBlockedRegion(target.getLocation(), plugin);
-                boolean attackerInBlockedRegion = RegionUtility.isBlockedRegion(attacker.getLocation(), plugin);
-
-                if(targetInBlockedRegion && !attackerInBlockedRegion){
-                    event.setCancelled(true);
-                    return;
-                }
-
-                if(!targetInBlockedRegion && !attackerInBlockedRegion){
-                    this.plugin.getCombatService().startCombat(target);
-                    this.plugin.getCombatService().startCombat(attacker);
-                }
+            if(!targetInBlockedRegion && !attackerInBlockedRegion){
+                this.plugin.getCombatService().startCombat(target);
+                this.plugin.getCombatService().startCombat(attacker);
             }
         }
     }
