@@ -47,6 +47,8 @@ public class PluginConfig extends OkaeriConfig {
 
         @CustomKey("bossbar-timer")
         private boolean bossbarTimer = false;
+
+        private boolean enderchest = false;
     }
 
     @Getter
@@ -81,5 +83,8 @@ public class PluginConfig extends OkaeriConfig {
 
         @CustomKey("config-reloaded")
         private String configReloaded = "<green>Configuration reloaded!";
+
+        @CustomKey("cannot-open-enderchest")
+        private String cannotOpenEnderchest = "<red>You cannot open an Ender Chest during combat!";
     }
 }

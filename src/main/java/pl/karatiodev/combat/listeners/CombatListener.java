@@ -86,6 +86,13 @@ public class CombatListener implements Listener {
         Player player = event.getPlayer();
         if(player.hasPermission("karatiocombat.bypass")) return;
 
+        if(plugin.getCombatService().isInCombat(player) && !plugin.getPluginConfig().getAntylogout().getSettings().isEnderchest() && event.getClickedBlock() != null
+        && event.getClickedBlock().getType() == Material.ENDER_CHEST && event.getAction() == Action.RIGHT_CLICK_BLOCK){
+            event.setCancelled(true);
+            player.sendMessage(ChatUtility.parse(plugin.getPluginConfig().getMessages().getCannotOpenEnderchest()));
+            return;
+        }
+
         if(plugin.getCombatService().isInCombat(player) && event.getItem() != null && event.getItem().getType() == Material.ENDER_PEARL &&
                 (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR)){
             if(plugin.getPluginConfig().getAntylogout().getSettings().isPearl()){
